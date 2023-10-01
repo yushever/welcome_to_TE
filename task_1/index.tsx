@@ -1,46 +1,68 @@
-import { Component } from 'react';
+import React, { Component } from "react";
 
 type IUser = {
-    name: string
-    age: number
-}
+  name: string;
+  age: number;
+};
 
 type IProps = {
-    user: IUser
-}
+  user: IUser;
+};
 
 // functional component
-const FirstComponent = ({ name, age }: IUser) => (
-    <div>
-        my name is {name}, my age is {age}
-    </div>
-);
+const FirstComponent = React.memo(({ name, age }: IUser) => (
+  <div>
+    my name is {name}, my age is {age}
+  </div>
+));
+
+export { FirstComponent };
 
 // functional component
-const SecondComponent = ({ user: { name, age } }: IProps) => (
-    <div>
-        my name is {name}, my age is {age}
-    </div>
+const Second = ({ user: { name, age } }: IProps) => (
+  <div>
+    my name is {name}, my age is {age}
+  </div>
 );
 
+export const SecondComponent = React.memo(Second, (prevProps, nextProps) => {
+  return (
+    prevProps.user.name === nextProps.user.name &&
+    prevProps.user.age === nextProps.user.age
+  );
+});
+
 // class component
-class ThirdComponent extends Component<IUser> {
-    render() {
-        return (
-            <div>
-                my name is {this.props.name}, my age is {this.props.age}
-            </div>
-        )
-    }
+export class ThirdComponent extends Component<IUser> {
+  shouldComponentUpdate(nextProps) {
+    return (
+      nextProps.name !== this.props.name || nextProps.age !== this.props.age
+    );
+  }
+
+  render() {
+    return (
+      <div>
+        my name is {this.props.name}, my age is {this.props.age}
+      </div>
+    );
+  }
 }
 
 // class component
-class FourthComponent extends Component<IProps> {
-    render() {
-        return (
-            <div>
-                my name is {this.props.user.name}, my age is {this.props.user.age}
-            </div>
-        )
-    }
+export class FourthComponent extends Component<IProps> {
+  shouldComponentUpdate(nextProps) {
+    return (
+      nextProps.user.name !== this.props.user.name ||
+      nextProps.user.age !== this.props.user.age
+    );
+  }
+
+  render() {
+    return (
+      <div>
+        my name is {this.props.user.name}, my age is {this.props.user.age}
+      </div>
+    );
+  }
 }
